@@ -1,85 +1,56 @@
 <!DOCTYPE html>
 <html>
-<head>
-<meta charset="utf-8" />
-<title>ZIM - Multiuser - Code Creativity</title>
+    <head>
+        <meta charset="utf-8" />
+        <title>ZIM - Shared - Multiuser - Code Creativity</title>
 
-<script src="https://zimjs.org/cdn/2.3.0/socket.io.js"></script>
+        <script src="https://zimjs.org/cdn/2.3.0/socket.io.js"></script>
 
+<script type="module">
+    import zim from "https://zimjs.org/cdn/016/zim_socket";
 
-<script type=module>
-
-import zim from "https://zimjs.org/cdn/016/zim_socket";
-
-// See Docs under Frame for FIT, FILL, FULL, and TAG
 new Frame(FIT, 1024, 768, light, dark, ready);
 function ready() {
-	
-	// given F (Frame), S (Stage), W (width), H (height)
-	// put code here
+    // Given F, S, W, H or frame, stage, stageW, stageH
 
-	 // ZIM SOCKET CONTENT - load a second window
-    
+    // 
+    // ZIM SOCKET CONTENT - load a second window
+
     // zimSocketURL comes from the import of zim_socket
     // get the app name here: https://zimjs.com/request.html
-    const appName = "multiuser";
+    const appName = "shared";
     const socket = new Socket(zimSocketURL, appName); 
 
-        
-    socket.on("ready", function() {
-        
-        zogg("connected");
-        // the socket.size gives the number of others in the socket (not including you)    
-        
-        const circle = new Circle(60, new RadialColor([white,fog],[0,1],-20,-20,0,0,0,60))
+    socket.on("ready", ()=>{
+        zogg("socket ready");
+
+        const ball = new Circle(100, blue)
             .center()
-            .mov(0,185)
-            .sha();
+            .drag();
+
+        ball.on("pressmove",()=>{
+
+            socket.setProperties({
+                x: Math.round(ball.x),
+                y: Math.round(ball.y)
             
-        STYLE = {align:CENTER, size:series(80,30)};
-        const num = new Label(socket.size + 1)
-            .centerReg()
-            .mov(0,190);
-            
-        new Label("Viewers\n(open tabs)")
-            .alp(.7)
-            .centerReg()
-            .pos(0,300,CENTER,CENTER);  
-        STYLE = {};
-        
-                    
+            })
+        });
+
         socket.on("data", function (d) {
             // normally, stuff happens in here ;-)
-        });         
-        
-        socket.on("otherjoin", function (d) { 
-            num.text = (socket.size + 1);
-            S.update();
-        });
-        
-        socket.on("otherleave", function (d) {
-            // the socket is kept open a little to get leaver's data 
-            // so wait a little for count to go down
-            timeout(.2, () => {
-                num.text = (socket.size + 1);
-                S.update();
-            });            
-        });
-        
-        S.update();
-    });
+            zogo(d);
+        });      
 
-    socket.on("error", function () {
-        num.text = "OOPS";
         S.update();
-    });
-	
-	
-		
-}
 
+    })
+    
+    
+
+} // end ready
 </script>
-<meta name="viewport" content="width=device-width, user-scalable=no" />
-</head>
-<body></body>
+        <meta name="viewport" content="width=device-width, user-scalable=no" />
+    </head>
+    <body></body>
 </html>
