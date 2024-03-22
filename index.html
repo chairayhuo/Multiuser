@@ -27,19 +27,25 @@ function ready() {
         const ball = new Circle(100, blue)
             .center()
             .drag();
-
-        ball.on("pressmove",()=>{
+        
+        ball.on("pressmove", ()=>{
 
             socket.setProperties({
-                x: Math.round(ball.x),
-                y: Math.round(ball.y)
+                x:Math.round(ball.x), 
+                y:Math.round(ball.y)
+            });
             
-            })
         });
 
         socket.on("data", function (d) {
             // normally, stuff happens in here ;-)
             zogo(d);
+
+            let x = socket.getLatestValue("x");
+            let y = socket.getLatestValue("y");
+
+            ball.loc(x, y);
+            S.update();
         });      
 
         S.update();
