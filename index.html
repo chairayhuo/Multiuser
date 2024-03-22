@@ -24,6 +24,19 @@ function ready() {
     socket.on("ready", ()=>{
         zogg("socket ready");
 
+        const input = new TextInput().loc(50,50);
+        F.on("keydown", e=>{
+            zog(e.key);
+            if (e.key == "Enter") {
+                const x = rand(W);
+                const y = rand(H);
+                new Label(input.text).loc(x, y);
+
+                socket.setProperties({})
+            }
+        })
+        
+
         const ball = new Circle(100, blue)
             .center()
             .drag();
@@ -47,6 +60,8 @@ function ready() {
             ball.loc(x, y);
             S.update();
         });      
+
+    
 
         S.update();
 
